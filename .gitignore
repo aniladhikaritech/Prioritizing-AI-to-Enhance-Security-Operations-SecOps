@@ -57,7 +57,9 @@ frontend/dist-ssr/
 # IDE & Editor files
 .vscode/
 .idea/
+.agents/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
+

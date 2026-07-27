@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const getApiBaseUrl = () => {
+  const hostname = window.location.hostname || 'localhost';
+  return `http://${hostname}:8000/api/v1`;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -26,7 +31,7 @@ export const authAPI = {
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
-    const response = await axios.post(`${API_BASE_URL}/auth/login`, formData, {
+    const response = await axios.post(`${getApiBaseUrl()}/auth/login`, formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
     return response.data;
@@ -36,6 +41,7 @@ export const authAPI = {
     return response.data;
   }
 };
+
 
 export const dashboardAPI = {
   getStats: async () => {

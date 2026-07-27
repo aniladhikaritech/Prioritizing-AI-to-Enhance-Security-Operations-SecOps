@@ -5,6 +5,9 @@
 **Project Title:** Prioritizing AI to Enhance Security Operations (SecOps)  
 **System Category:** Autonomous SOAR & SOC Security Operations Platform  
 
+> 🌐 **Live Interactive Web Demo Site**: [https://aniladhikaritech.github.io/Prioritizing-AI-to-Enhance-Security-Operations-SecOps/](https://aniladhikaritech.github.io/Prioritizing-AI-to-Enhance-Security-Operations-SecOps/)  
+> *(Click the live URL above to view and test the interactive SecOps Security Operations Center in your browser anywhere in the world!)*
+
 ---
 
 ## 🛡️ Project Overview & Purpose

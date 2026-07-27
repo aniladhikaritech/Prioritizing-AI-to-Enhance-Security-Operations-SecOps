@@ -16,8 +16,7 @@ class AIAnalysisOut(BaseModel):
     raw_response: Optional[Dict[str, Any]] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class IncidentOut(BaseModel):
     id: int
@@ -31,8 +30,7 @@ class IncidentOut(BaseModel):
     resolution_notes: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class AlertOut(BaseModel):
     id: int
@@ -47,8 +45,7 @@ class AlertOut(BaseModel):
     ai_analysis: Optional[AIAnalysisOut] = None
     incident: Optional[IncidentOut] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class FirewallRuleOut(BaseModel):
     id: int
@@ -61,5 +58,5 @@ class FirewallRuleOut(BaseModel):
     unblocked_at: Optional[datetime] = None
     unblocked_by: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
+

@@ -6,11 +6,14 @@ import IncidentTimeline from '../components/IncidentTimeline';
 import FirewallTable from '../components/FirewallTable';
 import AttackSimulator from '../components/AttackSimulator';
 import AIReasoningModal from '../components/AIReasoningModal';
+import ActivityAndThreatsFeed from '../components/ActivityAndThreatsFeed';
 import { dashboardAPI, logsAPI, firewallAPI, incidentsAPI } from '../services/api';
 import { SocketContext } from '../context/SocketContext';
+import { NotificationContext } from '../context/NotificationContext';
 
 const Dashboard = () => {
   const { liveLogs, latestIncident } = useContext(SocketContext);
+  const { notify } = useContext(NotificationContext);
 
   const [stats, setStats] = useState(null);
   const [logs, setLogs] = useState([]);
@@ -50,10 +53,17 @@ const Dashboard = () => {
     }
   }, [liveLogs]);
 
-  // Refresh stats & firewall rules when a new incident is mitigated via WebSocket
+  // Refresh stats & trigger real-time toast notification when a new incident is mitigated via WebSocket
   useEffect(() => {
     if (latestIncident) {
       loadData();
+      notify({
+        severity: latestIncident.verdict === 'TRUE_POSITIVE' ? 'CRITICAL' : 'HIGH',
+        title: `Incident Contained: ${latestIncident.source_ip}`,
+        summary: `AI Risk Score: ${latestIncident.risk_score}/100. Attacker IP quarantined in ${latestIncident.mttr_seconds}s.`,
+        source_ip: latestIncident.source_ip,
+        recommended_action: 'UFW Firewall Isolation Applied'
+      });
     }
   }, [latestIncident]);
 
@@ -79,7 +89,7 @@ const Dashboard = () => {
       <MetricCards stats={stats} />
 
       {/* Main Grid: Risk Gauge & Live Log Stream */}
-      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', minHeight: '420px' }}>
+      <div className="dashboard-grid-dual" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', minHeight: '420px' }}>
         <RiskGauge
           riskScore={currentIncident?.alert?.ai_analysis?.risk_score ?? 98}
           verdict={currentIncident?.alert?.ai_analysis?.verdict ?? "TRUE_POSITIVE"}
@@ -90,8 +100,11 @@ const Dashboard = () => {
         <LiveLogFeed logs={logs} />
       </div>
 
+      {/* Recent Activity Feed & Top Attacker IPs */}
+      <ActivityAndThreatsFeed logs={logs} firewallRules={firewallRules} />
+
       {/* Incident Response Timeline & Attack Simulator */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      <div className="dashboard-grid-dual" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         <IncidentTimeline incident={currentIncident} />
         <AttackSimulator onSimulationComplete={loadData} />
       </div>
@@ -110,3 +123,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

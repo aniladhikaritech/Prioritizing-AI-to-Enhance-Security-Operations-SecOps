@@ -2,7 +2,7 @@ import os
 import time
 import subprocess
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
 from app.models.alert import Alert
@@ -29,7 +29,8 @@ class SOAREngine:
         playbook_name = "Automated SSH Quarantine & IP Isolation"
         
         # Timeline recording
-        t0 = datetime.utcnow().strftime("%H:%M:%S")
+        now_utc = datetime.now(timezone.utc)
+        t0 = now_utc.strftime("%H:%M:%S")
         timeline_steps = [
             {
                 "time": t0,
@@ -44,7 +45,7 @@ class SOAREngine:
                 "status": "COMPLETED"
             },
             {
-                "time": datetime.utcnow().strftime("%H:%M:%S"),
+                "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
                 "step": "AI Analysis Completed",
                 "detail": f"Verdict: {ai_analysis.verdict} ({ai_analysis.risk_level} Risk - {ai_analysis.risk_score}/100)",
                 "status": "COMPLETED"
@@ -61,7 +62,7 @@ class SOAREngine:
             # Execute OS Firewall block command
             block_success, block_output = self._apply_firewall_block(source_ip)
             
-            t_exec = datetime.utcnow().strftime("%H:%M:%S")
+            t_exec = datetime.now(timezone.utc).strftime("%H:%M:%S")
             timeline_steps.append({
                 "time": t_exec,
                 "step": "Executing Playbook",
@@ -74,7 +75,7 @@ class SOAREngine:
             if existing_fw:
                 existing_fw.status = "BLOCKED"
                 existing_fw.reason = f"AI Auto-Quarantine: {ai_analysis.threat_type} (Score: {ai_analysis.risk_score})"
-                existing_fw.blocked_at = datetime.utcnow()
+                existing_fw.blocked_at = datetime.now(timezone.utc)
                 existing_fw.unblocked_at = None
             else:
                 fw_rule = FirewallRule(
@@ -83,12 +84,12 @@ class SOAREngine:
                     block_type="AUTOMATED_SOAR",
                     reason=f"AI Auto-Quarantine: {ai_analysis.threat_type} (Score: {ai_analysis.risk_score})",
                     risk_score=ai_analysis.risk_score,
-                    blocked_at=datetime.utcnow()
+                    blocked_at=datetime.now(timezone.utc)
                 )
                 db.add(fw_rule)
 
             timeline_steps.append({
-                "time": datetime.utcnow().strftime("%H:%M:%S"),
+                "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
                 "step": "Attacker IP Isolated",
                 "detail": f"IP {source_ip} blocked in UFW/iptables firewall. All further traffic dropped.",
                 "status": "SUCCESS"
@@ -97,7 +98,7 @@ class SOAREngine:
 
         else:
             timeline_steps.append({
-                "time": datetime.utcnow().strftime("%H:%M:%S"),
+                "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
                 "step": "No Isolation Required",
                 "detail": "AI risk score below threshold or false positive classification.",
                 "status": "SKIPPED"
@@ -176,8 +177,9 @@ class SOAREngine:
         rule = db.query(FirewallRule).filter(FirewallRule.ip_address == ip).first()
         if rule:
             rule.status = "UNBLOCKED"
-            rule.unblocked_at = datetime.utcnow()
+            rule.unblocked_at = datetime.now(timezone.utc)
             rule.unblocked_by = unblocked_by
+
 
             # OS level unblock if POSIX
             if os.name == "posix":

@@ -91,4 +91,12 @@ export const simulatorAPI = {
   }
 };
 
+export const networkAPI = {
+  getQR: async () => {
+    const response = await api.get('/network/qr');
+    return response.data;
+  }
+};
+
 export default api;
+

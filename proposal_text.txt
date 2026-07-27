@@ -1,0 +1,130 @@
+Student Name: Anil Adhikari 
+ 
+Project Proposal & Documentation Blueprint 
+Project Title: Prioritizing AI to Enhance Security Operations (SecOps) 
+ 
+1.1 Project Diagram 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1. Project Overview & Fundamentals 
+❖ Difficulty Level: Medium to Advanced (Requires a foundational understanding of security 
+logs, cybersecurity, Python scripting, and LLM API integration). 
+❖ Why it’s useful:  
+• Reduces human workload and improves accuracy in identifying real threats. 
+• Modern cyberattacks move at machine speed 
+• making it impossible for human analysts to defend systems manually.  
+• This project solves a massive enterprise problem: Alert Fatigue. AI analyzes 
+thousands of security logs in seconds, automatically separating "True Positives" 
+(real threats) from "False Positives" (harmless noise). 
+• Modern enterprises face high volumes of security alerts daily.  
+❖ Goal: To design and build an AI-Powered Automated Incident Response System capable 
+of continuously monitoring system logs, intelligently evaluating suspicious behavior using 
+an LLM, and executing automated countermeasures to contain threats without human 
+intervention. 
+❖ Importance: 
+• Eliminates alert fatigue for security teams. 
+• Drastically reduces the MTTR (Mean Time to Respond) from hours to seconds. 
+• Future-proofs enterprise defense against sophisticated automated attacks. 
+• Organizations face alert fatigue; AI reduces risk of human oversight.  
+• Faster detection and response minimize potential damage.  
+• Supports compliance and incident reporting requirements. 
+❖ Key Areas: AI-driven Log Triage, Automated Threat Hunting, and Natural Language Incident 
+Summarization. 
+• Threat Detection: Use AI to detect anomalies and suspicious behavior.  
+• Alert Prioritization: Rank threats by impact and probability.  
+• Automation: Trigger actions automatically for critical events.  
+• Reporting & Analytics: Provide insights and trends over time. 
+ 
+2. Technical Stack & Architecture 
+Tools, Technology & Methodology 
+SIEM / Log Management  
+• Open-source: Elasticsearch & Kibana (ELK Stack) or Wazuh (EDR/SIEM)  
+• Enterprise: Splunk  
+ 
+AI / LLM Integration 
+• Local LLMs: Ollama (e.g., LLaMA 3 offline)  
+• Cloud/Hybrid: OpenAI API integrated via LangChain (Python)  
+• Open-source: Elasticsearch & Kibana (ELK Stack) or Wazuh (EDR/SIEM)  
+ 
+Automation & Scripting 
+• Python: Orchestration, AI/ML modeling, automated playbooks  
+• Bash scripting: System automation  
+ 
+Infrastructure / Deployment  
+• Docker: Containerized, reproducible lab environments  
+ 
+Tools & Technologies 
+• Tools: SIEM (Splunk), Elasticsearch, Python (ML models)  
+• Technologies: Machine Learning, Event Correlation, Automation 
+ 
+Methodology / Workflow 
+• Docker: Containerized, reproducible lab environments  
+• Data Collection: Gather logs, events, and telemetry from endpoints 
+• Preprocessing: Normalize, filter, and enrich data  
+• AI Modeling: Apply ML/LLM models for anomaly detection, prediction, or automation  
+• Dashboard Integration: Visualize insights via Kibana or Splunk dashboards 
+• Response Automation: Trigger alerts, scripts, or playbooks automatically  
+• Testing & Iteration: Validate detections, refine models, and improve automation 
+ 
+ 
+3. Comprehensive Project Lab Setup & Execution (The Framework) 
+Objective: What were you investigating? 
+Investigation Target: Detecting and mitigating an active SSH Brute Force Attack on a Linux 
+server using an automated AI pipeline, culminating in the immediate, automated quarantine of the 
+attacker's IP address. 
+Environment: What did your lab look like? 
+• Victim VM: Ubuntu Server 22.04 LTS (IP: 192.168.1.50) running a standard SSH service 
+monitored by a Wazuh/Logstash agent. 
+• Attacker VM: Kali Linux (IP: 192.168.1.100) executing password-guessing attacks using 
+automated tools like Hydra. 
+• SIEM & AI Server: Dockerized environment hosting Elasticsearch (v8.x) and a centralized 
+Python orchestration script tied to a local deployment of Ollama (Llama 3). 
+Methodology & Technology — Step-by-Step Execution 
+1. Phase 1: Attack Generation & Ingestion: The Attacker VM launches a high-frequency 
+brute force attack against the target. The Ubuntu server records these invalid 
+authentication attempts natively in /var/log/auth.log. 
+2. Phase 2: Log Collection & Parsing: The log agent forwards these system events to the 
+SIEM in real-time, parsing metadata such as source IP , timestamp, and failure reasons. 
+3. Phase 3: AI Inference & Analysis: A Python script triggers when a threshold of failed logins 
+is crossed. It extracts the raw log payload and feeds it to the Local LLM with a strict system 
+prompt asking for a risk analysis and a classification verdict. 
+4. Phase 4: Automated Remediation: If the LLM returns a "Critical/High" risk score, the 
+Python automation agent instantly executes a remote iptables or UFW firewall command 
+on the Ubuntu server to drop all subsequent traffic from the attacker's IP (192.168.1.100). 
+ 
+Findings: What was observed? 
+• Linux Event Logs: The /var/log/auth.log registered massive spikes of Failed password for 
+invalid user and Connection closed by authenticating user. 
+• SIEM Rules Triggered: Wazuh Rule ID 5712 (SSHD brute force trying to get access) 
+successfully fired. 
+• AI Engine Output: The LLM assessed the parsed structure and produced the following 
+JSON assessment: 
+"Verdict: True Positive. Pattern indicates a highly distributed automated brute-force attempt from 
+source IP 192.168.1.100. Recommended action: Immediate Network Isolation. " 
+Conclusion: What happened and what is the verdict? 
+• Verdict: True Positive Critical Incident. Without the AI-driven automation framework, a 
+human analyst would have taken anywhere from 15 minutes to hours to spot the log 
+pattern and implement a firewall block. By that time, the system could have been 
+compromised. The AI system neutralized the attack vector completely within 3 seconds of 
+rule trigger. 
+• AI significantly reduced alert fatigue by highlighting true threats.  
+• Real incidents would have been detected faster, reducing potential damage. 
+• Demonstrates feasibility and effectiveness of AI in SecOps. 
+ 
+Summary: 
+This project is a web-based AI-assisted Security Operations dashboard. It collects security alerts, 
+uses AI to analyze and prioritize them, and provides recommendations for safe response. All 
+attacks are simulated in a lab environment, keeping the system fully protected and ethical. 
+ 

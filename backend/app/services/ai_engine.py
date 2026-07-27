@@ -15,6 +15,11 @@ Analyze the provided security log alert payload and determine:
 5. Threat Type (e.g. "SSH Brute Force Attack", "Web SQL Injection", "Reconnaissance Port Scan", "Legitimate Traffic Noise")
 6. Detailed Technical Summary explaining the attack vector and evidence.
 7. Recommended Action (e.g., "Immediate Network Isolation", "Monitor Log Patterns", "Whitelisting")
+8. Structured AI Incident Breakdown:
+   - what_happened: Clear description of the event
+   - why_malicious: Specific rationale for threat classification
+   - automated_actions_taken: Playbook response executed
+   - recommended_next_steps: Security guidance for analysts
 
 Respond ONLY with valid JSON in this exact structure:
 {
@@ -25,7 +30,11 @@ Respond ONLY with valid JSON in this exact structure:
   "threat_type": "SSH Brute Force Attack",
   "summary": "Pattern indicates a highly automated brute-force attempt from source IP 192.168.1.100 against SSH daemon on target 192.168.1.50.",
   "recommended_action": "Immediate Network Isolation",
-  "network_action": "IMMEDIATE_ISOLATION"
+  "network_action": "IMMEDIATE_ISOLATION",
+  "what_happened": "High-frequency SSH password-guessing brute force attack detected from IP 192.168.1.100 targeting port 22.",
+  "why_malicious": "Crossed Wazuh Rule 5712 threshold with 5+ failed authentication attempts within 60 seconds.",
+  "automated_actions_taken": "Triggered SOAR Playbook: Added temporary UFW/iptables DROP rule for IP 192.168.1.100.",
+  "recommended_next_steps": "Verify user account status, audit firewall quarantine list, and check for lateral movement."
 }"""
 
 class AIEngine:
@@ -57,7 +66,11 @@ class AIEngine:
                 "threat_type": "SSH Brute Force Attack",
                 "summary": f"Pattern indicates an active, automated high-frequency SSH password-guessing brute force attack from source IP {source_ip}. Identified {trigger_count} failed authentication attempts crossing the rule threshold within 60s.",
                 "recommended_action": f"Immediate Network Isolation. Quarantine IP {source_ip} via UFW/iptables drop rules to prevent credential compromise.",
-                "network_action": "IMMEDIATE_ISOLATION"
+                "network_action": "IMMEDIATE_ISOLATION",
+                "what_happened": f"Automated SSH brute force attack originating from source IP {source_ip} attempting dictionary authentication against victim port 22.",
+                "why_malicious": f"Triggered Wazuh Rule 5712 with {trigger_count} failed password attempts in rapid succession.",
+                "automated_actions_taken": f"SOAR Playbook executed: Automated firewall quarantine drop rule applied to {source_ip} in ~3.2s MTTR.",
+                "recommended_next_steps": "Keep IP in quarantine, review SSH auth configs (enforce SSH keys / disable root password auth), and monitor system auth logs."
             }
         elif rule_id == "31101" or "SQL Injection" in alert_data.get("title", ""):
             return {
@@ -68,7 +81,11 @@ class AIEngine:
                 "threat_type": "Web Application Attack (SQLi)",
                 "summary": f"Malicious SQL payload detected from source IP {source_ip} targeting web endpoints. Exploit patterns matched standard SQL injection syntax.",
                 "recommended_action": f"Immediate Network Isolation and IP Quarantine for {source_ip}.",
-                "network_action": "IMMEDIATE_ISOLATION"
+                "network_action": "IMMEDIATE_ISOLATION",
+                "what_happened": f"Web Application Firewall (WAF) rule fired due to SQL injection payload from IP {source_ip}.",
+                "why_malicious": "Contains dangerous SQL commands (`UNION SELECT`, `' OR 1=1`) attempting database extraction.",
+                "automated_actions_taken": f"SOAR Playbook executed: IP {source_ip} blocked at network boundary.",
+                "recommended_next_steps": "Inspect web server access logs and patch parameter binding in vulnerable endpoint."
             }
         else:
             # Legitimate traffic or low severity noise
@@ -80,8 +97,13 @@ class AIEngine:
                 "threat_type": "Legitimate Traffic / Harmless Noise",
                 "summary": f"Single auth anomaly or benign network activity from IP {source_ip}. Does not match malicious automation patterns.",
                 "recommended_action": "Log and continue monitoring. No automated action required.",
-                "network_action": "NO_ACTION"
+                "network_action": "NO_ACTION",
+                "what_happened": f"Single transient login failure or routine network ping detected from {source_ip}.",
+                "why_malicious": "Not classified as malicious; low event frequency and normal packet characteristics.",
+                "automated_actions_taken": "No automated containment action required; event recorded in SecOps database.",
+                "recommended_next_steps": "Continue standard logging and monitoring."
             }
+
 
     async def _analyze_ollama(self, alert_data: Dict[str, Any], raw_logs: list[str]) -> Dict[str, Any]:
         """Query local Ollama instance (LLaMA 3 model)"""

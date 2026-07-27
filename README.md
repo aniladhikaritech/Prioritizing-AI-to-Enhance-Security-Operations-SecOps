@@ -1,5 +1,5 @@
 # Prioritizing AI to Enhance Security Operations (SecOps)
-## AI-Powered Automated Incident Response System
+## Autonomous AI-Powered Automated Incident Response System (SOAR)
 
 **Student Name:** Anil Adhikari  
 **Project Title:** Prioritizing AI to Enhance Security Operations (SecOps)  
@@ -15,52 +15,55 @@ This project implements a complete **AI-Powered Automated Incident Response Syst
 1. **Real-Time Security Log Ingestion & Normalization**: Continuous monitoring of endpoint auth logs (`/var/log/auth.log`), Web WAF payloads, and SIEM rules (e.g., **Wazuh Rule 5712** for SSH Brute Force attempts).
 2. **LLM Threat Analysis & Inference Engine**: Applying AI (Ollama LLaMA 3, OpenAI, or Smart Local Engine) to evaluate suspicious behavior, determine threat verdicts (`TRUE_POSITIVE` vs `FALSE_POSITIVE`), assign risk scores (0–100), and produce structured JSON explanations.
 3. **Automated SOAR Quarantine Playbooks**: Instant execution of firewall drop commands (`UFW` / `iptables`) to isolate attacker IP addresses in **~3.2 seconds MTTR** (Mean Time to Respond).
-4. **Interactive SecOps Visual Dashboard**: Glassmorphic dark-mode web application featuring real-time WebSocket feeds, radial risk gauges, incident timelines, firewall quarantine management, and an interactive attack simulator.
+4. **Interactive SecOps Visual Dashboard**: Glassmorphic dark-mode web application featuring real-time WebSocket feeds, radial risk gauges, incident timelines, firewall quarantine management, audio alerts, and an interactive attack simulator.
+
+---
+
+## ✨ Features & Capabilities
+
+### Core Requirements (Project Proposal)
+- **AI-Powered SecOps Dashboard**: Real-time glassmorphic visual operations center.
+- **FastAPI & React Architecture**: Modular Python backend with modern React Vite SPA.
+- **Flexible Database Storage**: SQLAlchemy ORM with SQLite or PostgreSQL database models.
+- **JWT & RBAC Security**: Granular role-based access control (`Admin`, `Analyst`).
+- **Wazuh & ELK Ingestion**: Real-time webhook ingestion endpoint parsing Wazuh Rule 5712.
+- **Ollama LLaMA 3 Integration**: Native offline local LLM serving alongside Smart Local fallback.
+- **Automated Incident Response**: UFW & iptables firewall isolation playbooks executed in ~3.2s MTTR.
+- **Docker Deployment**: Single command orchestration via Docker Compose.
+
+### Enhanced Features
+1. 🔊 **Real-time Sound Alerts**: Synthesized audio alert tones for High and Critical security incidents, with user enable/disable controls.
+2. 🔔 **Real-time In-App Notification Alerts**: Floating toast notifications styled by severity (Low, Medium, High, Critical) with incident summary, timestamp, recommended action, and a Notification History panel.
+3. 📱 **Mobile Network QR Code Access**: Auto-detected local IP network QR code allowing trusted local network users to scan and open the dashboard on mobile devices.
+4. 📱 **Mobile-Friendly Layout**: Fully responsive layout with mobile drawer navigation, optimized touch targets, and responsive charts.
+5. ⚡ **Real-time WebSocket Updates**: Push updates across alerts, incidents, firewall rules, and AI analysis without page refreshes.
+6. 🧠 **Structured AI Incident Summaries**: Concise, structured AI breakdown detailing *What Happened*, *Why Classified Malicious*, *Risk Level*, *Automated Actions Taken*, and *Recommended Next Steps*.
+7. 📊 **Enhanced Dashboard Widgets**: Live Recent Activity Feed, Live Attack Counter, Top Attacker IP Breakdown, Risk Score Overview, and System Health Monitor.
+8. 🔐 **Security & Code Quality**: Input validation via Pydantic v2 schemas, rate limiting via `slowapi`, and timezone-aware UTC datetime tracking.
 
 ---
 
 ## 🏗️ System Architecture & Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                          SecOps Web Dashboard (Frontend)                        │
-│   React (Vite) / HSL Cyber Glassmorphism / Lucide Icons / Real-Time WebSockets  │
-└───────────────────────────────────────┬─────────────────────────────────────────┘
-                                        │ REST APIs & WebSockets (/ws)
-┌───────────────────────────────────────▼─────────────────────────────────────────┐
-│                             FastAPI Backend Engine                              │
-│  ┌─────────────────┬───────────────────┬────────────────────┬────────────────┐  │
-│  │ Authentication  │  Log Ingestion    │   AI Engine        │  SOAR Engine   │  │
-│  │ JWT & RBAC      │  Parser & Watcher │   (Ollama/OpenAI/  │  Automated     │  │
-│  │ (Admin/Analyst) │  SIEM Rule 5712   │    SecOps Local)   │  Firewall/UFW  │  │
-│  └─────────────────┴───────────────────┴────────────────────┴────────────────┘  │
-└───────────────────────────────────────┬─────────────────────────────────────────┘
-                                        │ SQLAlchemy ORM
-┌───────────────────────────────────────▼─────────────────────────────────────────┐
-│                               SQLite / PostgreSQL DB                            │
-│     [Users]  │  [Logs]  │  [Alerts]  │  [AI Analyses]  │  [Firewall Rules]      │
-└─────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│ React Frontend (Vite + Glassmorphic UI + Audio Alerts + QR Generator + Responsive Grid) │
+└───────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                            │ REST APIs & WebSockets (/ws)
+┌───────────────────────────────────────────▼─────────────────────────────────────────────┐
+│ FastAPI Backend Engine                                                                  │
+│  ├─ Auth & Security (JWT, RBAC, Rate Limiting)                                         │
+│  ├─ Log & SIEM Ingestor (Wazuh Rule 5712, auth.log regex parser)                        │
+│  ├─ AI Engine (Ollama LLaMA 3, OpenAI, Smart Local Engine)                             │
+│  ├─ SOAR Execution Playbooks (UFW / iptables drop execution)                            │
+│  └─ WebSocket Broadcast Hub & Network QR API                                            │
+└───────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                            │ SQLAlchemy ORM
+┌───────────────────────────────────────────▼─────────────────────────────────────────────┐
+│ SQLite / PostgreSQL Production Database                                                 │
+│  [Users]  │  [Logs]  │  [Alerts]  │  [AI Analyses]  │  [Firewall Rules]  │  [Incidents]     │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Response Pipeline Breakdown
-```
-1. Attack Generation  --> Attacker VM (192.168.1.100) launches SSH brute force via Hydra.
-2. Ingestion & Rule   --> Log parser extracts metadata, fires Wazuh Rule 5712 when failed attempts cross threshold.
-3. AI Inference       --> LLM analyzes payload, returns Verdict: True Positive, Risk Score: 98/100, 98% Confidence.
-4. SOAR Playbook      --> System executes UFW deny rule for 192.168.1.100 in 3.2s total MTTR.
-5. Real-Time Feed     --> Live WebSocket broadcasts timeline update & quarantine state to dashboard.
-```
-
----
-
-## ⚡ Tech Stack & Technologies
-
-- **Backend**: Python 3.11+, FastAPI, SQLAlchemy ORM, Pydantic v2, Pytest, WebSockets.
-- **Frontend**: React 18, Vite, Lucide Icons, Axios, HSL CSS Glassmorphism Design Tokens.
-- **AI & LLM Integration**: Ollama (LLaMA 3 offline), OpenAI API, Smart SecOps Local Inference Engine.
-- **Database & Storage**: SQLite / PostgreSQL with seed user roles (`Admin`, `Analyst`).
-- **Security & Containment**: UFW / iptables firewall execution, JWT authentication, bcrypt password hashing, RBAC control.
-- **Deployment**: Docker, Docker Compose.
 
 ---
 
@@ -74,8 +77,8 @@ cd backend
 python -m pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-- API Base URL: `http://localhost:8000/api/v1`
-- OpenAPI Documentation: `http://localhost:8000/docs`
+- REST API Base URL: `http://localhost:8000/api/v1`
+- Swagger OpenAPI Specs: `http://localhost:8000/docs`
 
 #### 2. Frontend Setup
 ```bash
@@ -100,20 +103,30 @@ Access the dashboard at `http://localhost:5173`.
 
 ---
 
-## 🧪 Automated Testing
+## 🧪 Automated Testing & Verification
 
-Run the backend Pytest test suite:
+### Run Backend Pytest Suite
 ```bash
 cd backend
 python -m pytest tests
 ```
-Verified Test Coverage:
-- `test_auth.py`: JWT login, password verification, and RBAC registration.
-- `test_log_parser.py`: Auth log regex extraction and Wazuh Rule 5712 triggers.
-- `test_ai_engine.py`: Structured JSON threat analysis & verdict validation.
+Verified Test Suite:
+- `test_auth.py`: User registration, password hashing, and JWT token authentication.
+- `test_log_parser.py`: Auth log extraction and Wazuh Rule 5712 threshold parsing.
+- `test_ai_engine.py`: AI threat verdict evaluation and structured incident summary validation.
+- `test_network.py`: Local network IP auto-detection and QR code generation.
+- `test_wazuh_integration.py`: End-to-end Wazuh alert webhook ingestion and automated firewall quarantine execution.
+
+### Run Frontend Production Build Verification
+```bash
+cd frontend
+npm run build
+```
+Result: Clean Vite production build with zero errors.
 
 ---
 
 ## 📖 Comprehensive Lab Setup Guide
 
-For full Virtual Machine deployment instructions (Kali Linux Attacker VM `192.168.1.100`, Ubuntu Victim VM `192.168.1.50`, and Ollama LLaMA 3 model serving), refer to [lab_setup_guide.md](file:///d:/Programming/First%20Year%20Cybersecurity%20Project/lab_setup_guide.md).
+For full Virtual Machine lab deployment instructions (Kali Linux Attacker VM `192.168.1.100`, Ubuntu Victim VM `192.168.1.50`, and Ollama LLaMA 3 model serving), refer to [lab_setup_guide.md](file:///d:/Programming/First%20Year%20Cybersecurity%20Project/lab_setup_guide.md).
+

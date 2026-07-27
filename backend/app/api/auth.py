@@ -29,12 +29,12 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": UserOut.from_orm(user)
+        "user": UserOut.model_validate(user)
     }
 
 @router.get("/me", response_model=UserOut)
 def get_me(current_user: User = Depends(get_current_user)):
-    return UserOut.from_orm(current_user)
+    return UserOut.model_validate(current_user)
 
 @router.post("/register", response_model=UserOut)
 def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
@@ -55,4 +55,4 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return UserOut.from_orm(new_user)
+    return UserOut.model_validate(new_user)

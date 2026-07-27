@@ -10,41 +10,58 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const wsUrl = `ws://${window.location.hostname}:8000/ws`;
-    const ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      console.log("Connected to SecOps WebSocket Server");
-      setConnected(true);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const payload = JSON.parse(event.data);
-        const { event: evtType, data } = payload;
-
-        if (evtType === "NEW_LOG") {
-          setLiveLogs((prev) => [data, ...prev.slice(0, 100)]);
-        } else if (evtType === "ALERT_TRIGGERED") {
-          setLatestAlert(data);
-        } else if (evtType === "INCIDENT_MITIGATED") {
-          setLatestIncident(data);
-        }
-      } catch (err) {
-        console.error("Failed to parse WebSocket message:", err);
+    try {
+      const hostname = window.location.hostname || 'localhost';
+      // Disable WebSocket attempt on static HTTPS demo hosts (e.g. GitHub Pages) to prevent Mixed Content security errors
+      if (hostname.includes('github.io') || hostname.includes('vercel.app')) {
+        console.log("Static web host detected - running in Live Demo Mode.");
+        return;
       }
-    };
 
-    ws.onclose = () => {
-      console.log("WebSocket Disconnected");
-      setConnected(false);
-    };
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${hostname}:8000/ws`;
+      const ws = new WebSocket(wsUrl);
 
-    setSocket(ws);
+      ws.onopen = () => {
+        console.log("Connected to SecOps WebSocket Server");
+        setConnected(true);
+      };
 
-    return () => {
-      ws.close();
-    };
+      ws.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          const { event: evtType, data } = payload;
+
+          if (evtType === "NEW_LOG") {
+            setLiveLogs((prev) => [data, ...prev.slice(0, 100)]);
+          } else if (evtType === "ALERT_TRIGGERED") {
+            setLatestAlert(data);
+          } else if (evtType === "INCIDENT_MITIGATED") {
+            setLatestIncident(data);
+          }
+        } catch (err) {
+          console.error("Failed to parse WebSocket message:", err);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket Disconnected");
+        setConnected(false);
+      };
+
+      ws.onerror = (err) => {
+        console.warn("WebSocket connection error:", err);
+        setConnected(false);
+      };
+
+      setSocket(ws);
+
+      return () => {
+        ws.close();
+      };
+    } catch (e) {
+      console.warn("WebSocket initialization skipped:", e);
+    }
   }, []);
 
   return (

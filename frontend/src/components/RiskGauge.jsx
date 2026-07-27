@@ -48,6 +48,27 @@ const RiskGauge = ({ riskScore = 98, verdict = "TRUE_POSITIVE", threatType = "SS
         <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#f8fafc' }}>{threatType}</p>
         <p style={{ fontSize: '0.75rem', color: '#64748b' }}>AI Confidence Score: <span style={{ color: '#10b981', fontWeight: '700' }}>{(confidence * 100).toFixed(0)}%</span></p>
 
+        {/* Threat Severity Meter Bar (LOW / MEDIUM / HIGH / CRITICAL) */}
+        <div style={{ width: '100%', marginTop: '14px', background: 'rgba(15, 23, 42, 0.6)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '6px' }}>
+            <span style={{ color: riskScore < 40 ? '#10b981' : '#64748b' }}>LOW</span>
+            <span style={{ color: riskScore >= 40 && riskScore < 70 ? '#eab308' : '#64748b' }}>MEDIUM</span>
+            <span style={{ color: riskScore >= 70 && riskScore < 85 ? '#f97316' : '#64748b' }}>HIGH</span>
+            <span style={{ color: riskScore >= 85 ? '#ef4444' : '#64748b' }}>CRITICAL</span>
+          </div>
+          <div style={{ height: '8px', width: '100%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              style={{
+                height: '100%',
+                width: `${riskScore}%`,
+                background: color,
+                borderRadius: '4px',
+                transition: 'width 0.8s ease'
+              }}
+            />
+          </div>
+        </div>
+
         {onOpenModal && (
           <button 
             id="view-ai-reasoning-btn"
@@ -64,3 +85,4 @@ const RiskGauge = ({ riskScore = 98, verdict = "TRUE_POSITIVE", threatType = "SS
 };
 
 export default RiskGauge;
+

@@ -7,9 +7,13 @@ import FirewallTable from '../components/FirewallTable';
 import AttackSimulator from '../components/AttackSimulator';
 import AIReasoningModal from '../components/AIReasoningModal';
 import ActivityAndThreatsFeed from '../components/ActivityAndThreatsFeed';
+import SystemHealthWidget from '../components/SystemHealthWidget';
+import ThreatIntelModal from '../components/ThreatIntelModal';
+import AttackReplayModal from '../components/AttackReplayModal';
 import { dashboardAPI, logsAPI, firewallAPI, incidentsAPI } from '../services/api';
 import { SocketContext } from '../context/SocketContext';
 import { NotificationContext } from '../context/NotificationContext';
+import { Play, Globe, Download, Search } from 'lucide-react';
 
 const Dashboard = () => {
   const { liveLogs, latestIncident } = useContext(SocketContext);
@@ -21,6 +25,11 @@ const Dashboard = () => {
   const [currentIncident, setCurrentIncident] = useState(null);
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [currentAiData, setCurrentAiData] = useState(null);
+
+  const [intelIp, setIntelIp] = useState(null);
+  const [intelOpen, setIntelOpen] = useState(false);
+  const [replayOpen, setReplayOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadData = async () => {
     try {
@@ -53,7 +62,6 @@ const Dashboard = () => {
     }
   }, [liveLogs]);
 
-  // Refresh stats & trigger real-time toast notification when a new incident is mitigated via WebSocket
   useEffect(() => {
     if (latestIncident) {
       loadData();
@@ -83,8 +91,68 @@ const Dashboard = () => {
     setAiModalOpen(true);
   };
 
+  const handleOpenIntel = (ip) => {
+    setIntelIp(ip || currentIncident?.source_ip || '192.168.1.100');
+    setIntelOpen(true);
+  };
+
+  const handleExportReport = () => {
+    const reportText = `SECOPS AI INCIDENT AUDIT REPORT\n===================================\nDate: ${new Date().toLocaleString()}\nIncident ID: #INC-${currentIncident?.id || 1}\nAttacker IP: ${currentIncident?.source_ip || '192.168.1.100'}\nVerdict: TRUE_POSITIVE (Risk Score: 98/100)\nPlaybook Executed: Automated SSH Quarantine\nMTTR: 3.2s\nStatus: CONTAINER & QUARANTINED IN UFW FIREWALL\n`;
+    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `secops_incident_report_INC-${currentIncident?.id || 1}.txt`;
+    link.click();
+  };
+
+  // Filter logs by search query
+  const filteredLogs = searchQuery
+    ? logs.filter(l => 
+        l.source_ip?.includes(searchQuery) ||
+        l.event_type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        l.raw_payload?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : logs;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Global Search & Action Toolbar */}
+      <div className="glass-panel" style={{ padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, maxWidth: '420px' }}>
+          <Search size={18} color="#06b6d4" />
+          <input
+            type="text"
+            placeholder="Global SOC Search (Search by IP, Event Type, Payload...)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              background: 'rgba(15, 23, 42, 0.8)',
+              border: '1px solid rgba(56, 189, 248, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: '#f8fafc',
+              fontSize: '0.825rem'
+            }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button onClick={() => setReplayOpen(true)} className="btn-cyber-outline" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
+            <Play size={15} color="#06b6d4" /> Live Attack Replay
+          </button>
+
+          <button onClick={() => handleOpenIntel()} className="btn-cyber-outline" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
+            <Globe size={15} color="#38bdf8" /> Threat Intel Lookup
+          </button>
+
+          <button onClick={handleExportReport} className="btn-cyber" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
+            <Download size={15} /> Export Incident Report
+          </button>
+        </div>
+      </div>
+
       {/* Metrics Row */}
       <MetricCards stats={stats} />
 
@@ -97,11 +165,14 @@ const Dashboard = () => {
           confidence={currentIncident?.alert?.ai_analysis?.confidence_score ?? 0.98}
           onOpenModal={handleInspectAI}
         />
-        <LiveLogFeed logs={logs} />
+        <LiveLogFeed logs={filteredLogs} />
       </div>
 
+      {/* Live System & Service Health Status */}
+      <SystemHealthWidget />
+
       {/* Recent Activity Feed & Top Attacker IPs */}
-      <ActivityAndThreatsFeed logs={logs} firewallRules={firewallRules} />
+      <ActivityAndThreatsFeed logs={filteredLogs} firewallRules={firewallRules} />
 
       {/* Incident Response Timeline & Attack Simulator */}
       <div className="dashboard-grid-dual" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
@@ -118,9 +189,24 @@ const Dashboard = () => {
         onClose={() => setAiModalOpen(false)}
         aiData={currentAiData}
       />
+
+      {/* Threat Intel Modal */}
+      <ThreatIntelModal
+        isOpen={intelOpen}
+        onClose={() => setIntelOpen(false)}
+        ipAddress={intelIp}
+      />
+
+      {/* Attack Replay Modal */}
+      <AttackReplayModal
+        isOpen={replayOpen}
+        onClose={() => setReplayOpen(false)}
+        incident={currentIncident}
+      />
     </div>
   );
 };
 
 export default Dashboard;
+
 

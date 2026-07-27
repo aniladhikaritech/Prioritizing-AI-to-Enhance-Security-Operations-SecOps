@@ -104,5 +104,17 @@ export const networkAPI = {
   }
 };
 
+export const aiAPI = {
+  chat: async (message) => {
+    const response = await api.post('/ai/chat', { message });
+    return response.data;
+  },
+  getThreatIntel: async (ip) => {
+    const response = await api.get(`/ai/threat-intel/${ip}`);
+    return response.data;
+  }
+};
+
 export default api;
+
 

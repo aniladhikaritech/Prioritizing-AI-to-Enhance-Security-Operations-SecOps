@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Shield, User, LogOut, Cpu, QrCode, Bell, Volume2, VolumeX, Menu, X } from 'lucide-react';
+import { Shield, User, LogOut, Cpu, QrCode, Bell, Volume2, VolumeX, Menu, X, Bot } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { SocketContext } from '../context/SocketContext';
 import { NotificationContext } from '../context/NotificationContext';
 import QRCodeModal from './QRCodeModal';
 import NotificationHistoryModal from './NotificationHistoryModal';
+import AIChatBotModal from './AIChatBotModal';
 
 const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
   const { user, logout } = useContext(AuthContext);
@@ -13,6 +14,8 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
 
   const [qrOpen, setQrOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+
 
   return (
     <>
@@ -117,6 +120,17 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               <span>Mobile QR</span>
             </button>
 
+            {/* AI SOC Assistant Chatbot Button */}
+            <button
+              onClick={() => setChatOpen(!chatOpen)}
+              className="btn-cyber"
+              style={{ padding: '6px 12px', fontSize: '0.8rem', gap: '6px' }}
+              title="Open AI SOC Assistant Chat"
+            >
+              <Bot size={16} />
+              <span>AI Chat</span>
+            </button>
+
             {/* User Badge */}
             {user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '12px', borderLeft: '1px solid rgba(148, 163, 184, 0.2)' }}>
@@ -145,9 +159,13 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
 
       {/* Notification History Modal */}
       <NotificationHistoryModal isOpen={historyOpen} onClose={() => setHistoryOpen(false)} />
+
+      {/* AI SOC Assistant Chatbot */}
+      <AIChatBotModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 };
+
 
 export default Navbar;
 

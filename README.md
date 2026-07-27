@@ -126,7 +126,49 @@ Result: Clean Vite production build with zero errors.
 
 ---
 
+## 🖼️ Dashboard Screenshots & Visual Interface
+
+```
++-----------------------------------------------------------------------------------+
+| [Shield] SecOps AI | Incident Response Center         [AI: SMART LOCAL] [LIVE] [QR] |
++-----------------------------------------------------------------------------------+
+| TOTAL LOGS   | LIVE ATTACK COUNTER | AVERAGE MTTR | BLOCKED IPS | HEALTH STATUS  |
+|   1,248      |        12           |    3.2s      |     1       | 100% HEALTHY   |
++-----------------------------------------------------------------------------------+
+|                                 GLOBAL ATTACK MAP                                 |
+|    [ Nepal / Lab: 192.168.1.100 ] <----> [ Germany ] <----> [ Russia ]            |
++----------------------------------------+------------------------------------------+
+|  AI RISK GAUGE & SEVERITY METER        |  LIVE LOG FEED & TELEMETRY STREAM        |
+|  Score: 98/100 (CRITICAL)              |  12:14:25 - SSH Failed for root          |
++----------------------------------------+------------------------------------------+
+```
+*(Place screenshots of your visual dashboard, mobile view, attack replay, and AI chat assistant here for GitHub presentation)*
+
+---
+
+## 🔌 API Documentation & Endpoints
+
+| Method | Endpoint Path | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/login` | Authenticate user & receive JWT token | Public |
+| `POST` | `/api/v1/auth/register` | Register new analyst account | Public |
+| `GET` | `/api/v1/dashboard/stats` | Fetch real-time metrics & noise reduction % | Authenticated |
+| `GET` | `/api/v1/logs` | Fetch normalized security log entries | Authenticated |
+| `GET` | `/api/v1/alerts` | Fetch SIEM alerts & AI analysis reports | Authenticated |
+| `GET` | `/api/v1/incidents` | Fetch historical incidents & timeline steps | Authenticated |
+| `GET` | `/api/v1/firewall` | Fetch active firewall drop rules & quarantined IPs | Authenticated |
+| `POST` | `/api/v1/firewall/{ip}/unblock` | Unblock quarantined IP address | Admin |
+| `POST` | `/api/v1/wazuh/webhook` | Ingest raw Wazuh SIEM alerts | Webhook |
+| `POST` | `/api/v1/simulator/launch` | Trigger simulated SSH brute-force attack | Admin |
+| `GET` | `/api/v1/network/qr` | Get local network IP & QR code image | Authenticated |
+| `POST` | `/api/v1/ai/chat` | Query interactive AI SOC Chatbot | Authenticated |
+| `GET` | `/api/v1/ai/threat-intel/{ip}` | Perform Threat Intelligence IP reputation lookup | Authenticated |
+| `WS` | `/ws` | Real-time WebSocket event stream | Open |
+
+---
+
 ## 📖 Comprehensive Lab Setup Guide
 
 For full Virtual Machine lab deployment instructions (Kali Linux Attacker VM `192.168.1.100`, Ubuntu Victim VM `192.168.1.50`, and Ollama LLaMA 3 model serving), refer to [lab_setup_guide.md](file:///d:/Programming/First%20Year%20Cybersecurity%20Project/lab_setup_guide.md).
+
 

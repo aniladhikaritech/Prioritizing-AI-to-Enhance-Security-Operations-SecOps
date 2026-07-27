@@ -11,10 +11,14 @@ import SystemHealthWidget from '../components/SystemHealthWidget';
 import ThreatIntelModal from '../components/ThreatIntelModal';
 import AttackReplayModal from '../components/AttackReplayModal';
 import AttackMap from '../components/AttackMap';
+import MitreAttackMatrix from '../components/MitreAttackMatrix';
+import SecurityTrendsChart from '../components/SecurityTrendsChart';
+import SOARPlaybooksWidget from '../components/SOARPlaybooksWidget';
+import ExecutiveBriefingModal from '../components/ExecutiveBriefingModal';
 import { dashboardAPI, logsAPI, firewallAPI, incidentsAPI } from '../services/api';
 import { SocketContext } from '../context/SocketContext';
 import { NotificationContext } from '../context/NotificationContext';
-import { Play, Globe, Download, Search } from 'lucide-react';
+import { Play, Globe, Download, Search, Award } from 'lucide-react';
 
 const Dashboard = () => {
   const { liveLogs, latestIncident } = useContext(SocketContext);
@@ -30,6 +34,7 @@ const Dashboard = () => {
   const [intelIp, setIntelIp] = useState(null);
   const [intelOpen, setIntelOpen] = useState(false);
   const [replayOpen, setReplayOpen] = useState(false);
+  const [cisoOpen, setCisoOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const loadData = async () => {
@@ -140,6 +145,10 @@ const Dashboard = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button onClick={() => setCisoOpen(true)} className="btn-cyber" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
+            <Award size={15} /> CISO Executive Briefing
+          </button>
+
           <button onClick={() => setReplayOpen(true)} className="btn-cyber-outline" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
             <Play size={15} color="#06b6d4" /> Live Attack Replay
           </button>
@@ -148,8 +157,8 @@ const Dashboard = () => {
             <Globe size={15} color="#38bdf8" /> Threat Intel Lookup
           </button>
 
-          <button onClick={handleExportReport} className="btn-cyber" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
-            <Download size={15} /> Export Incident Report
+          <button onClick={handleExportReport} className="btn-cyber-outline" style={{ padding: '8px 14px', fontSize: '0.8rem', gap: '6px' }}>
+            <Download size={15} /> Export Audit Report
           </button>
         </div>
       </div>
@@ -159,6 +168,12 @@ const Dashboard = () => {
 
       {/* Live Global Attack Map Visualizer */}
       <AttackMap logs={filteredLogs} firewallRules={firewallRules} />
+
+      {/* 24-Hour Telemetry Volume & Noise Reduction Trend Chart */}
+      <SecurityTrendsChart />
+
+      {/* MITRE ATT&CK Matrix Mapping */}
+      <MitreAttackMatrix />
 
       {/* Main Grid: Risk Gauge & Live Log Stream */}
       <div className="dashboard-grid-dual" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', minHeight: '420px' }}>
@@ -171,6 +186,9 @@ const Dashboard = () => {
         />
         <LiveLogFeed logs={filteredLogs} />
       </div>
+
+      {/* Automated SOAR Playbook Execution Center */}
+      <SOARPlaybooksWidget />
 
       {/* Live System & Service Health Status */}
       <SystemHealthWidget />
@@ -207,11 +225,18 @@ const Dashboard = () => {
         onClose={() => setReplayOpen(false)}
         incident={currentIncident}
       />
+
+      {/* CISO Executive Briefing Generator Modal */}
+      <ExecutiveBriefingModal
+        isOpen={cisoOpen}
+        onClose={() => setCisoOpen(false)}
+      />
     </div>
   );
 };
 
 export default Dashboard;
+
 
 
 

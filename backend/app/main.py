@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
@@ -10,27 +11,30 @@ from app.services.websocket_manager import ws_manager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("SecOpsMain")
 
-# Wait for DB readiness (PostgreSQL / SQLite)
-try:
-    from app.database import wait_for_db
-    wait_for_db()
-except Exception as e:
-    logger.warning(f"DB readiness check warning: {e}")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        from app.database import wait_for_db
+        wait_for_db()
+    except Exception as e:
+        logger.warning(f"DB readiness check warning: {e}")
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+    # Create database tables
+    Base.metadata.create_all(bind=engine)
 
-# Seed default users
-db = SessionLocal()
-try:
-    init_db_data(db)
-finally:
-    db.close()
+    # Seed default users
+    db = SessionLocal()
+    try:
+        init_db_data(db)
+    finally:
+        db.close()
+    yield
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    description="AI-Powered Automated Incident Response System (SecOps) API Engine"
+    description="AI-Powered Automated Incident Response System (SecOps) API Engine",
+    lifespan=lifespan
 )
 
 # CORS setup for Frontend integration

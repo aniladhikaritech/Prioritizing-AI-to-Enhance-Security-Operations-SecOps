@@ -10,6 +10,7 @@ import ActivityAndThreatsFeed from '../components/ActivityAndThreatsFeed';
 import SystemHealthWidget from '../components/SystemHealthWidget';
 import ThreatIntelModal from '../components/ThreatIntelModal';
 import AttackReplayModal from '../components/AttackReplayModal';
+import AttackMap from '../components/AttackMap';
 import { dashboardAPI, logsAPI, firewallAPI, incidentsAPI } from '../services/api';
 import { SocketContext } from '../context/SocketContext';
 import { NotificationContext } from '../context/NotificationContext';
@@ -156,6 +157,9 @@ const Dashboard = () => {
       {/* Metrics Row */}
       <MetricCards stats={stats} />
 
+      {/* Live Global Attack Map Visualizer */}
+      <AttackMap logs={filteredLogs} firewallRules={firewallRules} />
+
       {/* Main Grid: Risk Gauge & Live Log Stream */}
       <div className="dashboard-grid-dual" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', minHeight: '420px' }}>
         <RiskGauge
@@ -208,5 +212,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 

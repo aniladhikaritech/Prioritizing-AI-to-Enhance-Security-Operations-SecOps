@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Production Database Service
+  db:
+    image: postgres:16-alpine
+    container_name: secops-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: secops
+      POSTGRES_PASSWORD: secops_password123
+      POSTGRES_DB: secops_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U secops -d secops_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - secops-network
+
+  # Local Ollama AI Container Service (LLaMA 3)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: secops-ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - secops-network
+
+  # FastAPI Backend API & AI Automation Engine Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: secops-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - USE_POSTGRES=true
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=secops
+      - POSTGRES_PASSWORD=secops_password123
+      - POSTGRES_DB=secops_db
+      - POSTGRES_PORT=5432
+      - AI_ENGINE_MODE=smart_local
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    networks:
+      - secops-network
+
+  # Vite + React SecOps Web Dashboard Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: secops-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - secops-network
+
+volumes:
+  postgres_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  secops-network:
+    driver: bridge

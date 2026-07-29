@@ -1,4 +1,5 @@
 import axios from 'axios';
+import QRCode from 'qrcode';
 
 const getApiBaseUrl = () => {
   const hostname = window.location.hostname || 'localhost';
@@ -205,9 +206,37 @@ export const networkAPI = {
   getQR: async () => {
     try {
       const response = await api.get('/network/qr');
-      return response.data;
+      if (response.data && response.data.qr_code_base64) {
+        return response.data;
+      }
     } catch (err) {
-      return { local_ip: '192.168.1.67', qr_code_base64: '' };
+      // Backend not available (e.g. static GitHub Pages demo)
+    }
+
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://aniladhikaritech.github.io/Prioritizing-AI-to-Enhance-Security-Operations-SecOps/';
+    const hostname = typeof window !== 'undefined' ? (window.location.hostname || '192.168.1.67') : '192.168.1.67';
+
+    try {
+      const qrDataUrl = await QRCode.toDataURL(currentUrl, {
+        width: 250,
+        margin: 2,
+        color: {
+          dark: '#00F2FE',
+          light: '#0D1117'
+        }
+      });
+      return {
+        local_ip: hostname,
+        dashboard_url: currentUrl,
+        qr_code_base64: qrDataUrl
+      };
+    } catch (qrErr) {
+      console.error('Failed to generate fallback QR code:', qrErr);
+      return {
+        local_ip: hostname,
+        dashboard_url: currentUrl,
+        qr_code_base64: ''
+      };
     }
   }
 };

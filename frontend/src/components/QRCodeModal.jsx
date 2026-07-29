@@ -82,21 +82,21 @@ const QRCodeModal = ({ isOpen, onClose }) => {
 
         {loading ? (
           <div style={{ padding: '40px', color: '#38bdf8' }}>Generating Network QR Code...</div>
-        ) : qrData ? (
+        ) : qrData && qrData.qr_code_base64 ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '100%' }}>
             <div
               style={{
                 padding: '16px',
                 background: '#0D1117',
                 borderRadius: '12px',
-                border: '2px solid rgba(6, 182, 212, 0.3)',
-                boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)'
+                border: '2px solid rgba(6, 182, 212, 0.4)',
+                boxShadow: '0 0 25px rgba(6, 182, 212, 0.25)'
               }}
             >
               <img
                 src={qrData.qr_code_base64}
                 alt="SecOps Dashboard Access QR Code"
-                style={{ width: '200px', height: '200px', display: 'block' }}
+                style={{ width: '200px', height: '200px', display: 'block', borderRadius: '4px' }}
               />
             </div>
 
@@ -109,19 +109,34 @@ const QRCodeModal = ({ isOpen, onClose }) => {
                 padding: '10px 14px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                gap: '10px'
               }}
             >
-              <div style={{ textAlign: 'left' }}>
-                <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>LOCAL DASHBOARD URL</span>
-                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block', fontWeight: '600', letterSpacing: '0.05em' }}>
+                  MOBILE ACCESSIBLE URL
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    color: '#38bdf8',
+                    fontFamily: 'var(--font-mono)',
+                    display: 'block',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                  title={qrData.dashboard_url}
+                >
                   {qrData.dashboard_url}
                 </span>
               </div>
               <button
                 onClick={handleCopyUrl}
                 className="btn-cyber-outline"
-                style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                style={{ padding: '6px 10px', fontSize: '0.75rem', flexShrink: 0 }}
                 title="Copy URL"
               >
                 {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
@@ -130,10 +145,10 @@ const QRCodeModal = ({ isOpen, onClose }) => {
 
             <div style={{ display: 'flex', gap: '16px', fontSize: '0.75rem', color: '#64748b' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Wifi size={14} color="#10b981" /> Trusted Network Only
+                <Wifi size={14} color="#10b981" /> Trusted Network
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Smartphone size={14} color="#38bdf8" /> Responsive UI
+                <Smartphone size={14} color="#38bdf8" /> Mobile Responsive
               </span>
             </div>
           </div>

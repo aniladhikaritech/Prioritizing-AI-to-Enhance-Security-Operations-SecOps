@@ -68,6 +68,26 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               </span>
             </div>
 
+            {/* User Profile Badge (Positioned on the Left side of right action buttons) */}
+            {user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '8px', paddingLeft: '8px', borderLeft: '1px solid rgba(148, 163, 184, 0.2)', borderRight: '1px solid rgba(148, 163, 184, 0.2)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <User size={18} color="#38bdf8" />
+                  <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#f8fafc' }}>{user.full_name || user.username}</span>
+                  <span className="badge-critical" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>{user.role}</span>
+                </div>
+                <button 
+                  id="logout-button"
+                  onClick={logout} 
+                  className="btn-cyber-outline" 
+                  style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                  title="Sign out"
+                >
+                  <LogOut size={14} />
+                </button>
+              </div>
+            )}
+
             {/* Sound Alert Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}

@@ -1,10 +1,7 @@
-import React, { useContext } from 'react';
-import { LayoutDashboard, AlertOctagon, ShieldAlert, Settings, Crosshair, User, LogOut } from 'lucide-react';
-import { AuthContext } from '../context/AuthContext';
+import React from 'react';
+import { LayoutDashboard, AlertOctagon, ShieldAlert, Settings, Crosshair } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }) => {
-  const { user, logout } = useContext(AuthContext);
-
   const navItems = [
     { id: 'dashboard', label: 'SOC Dashboard', icon: LayoutDashboard },
     { id: 'incidents', label: 'Incidents & Playbooks', icon: AlertOctagon },
@@ -22,7 +19,7 @@ const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }) => {
     <aside
       className={`glass-panel sidebar-responsive ${isMobileOpen ? 'mobile-open' : ''}`}
       style={{
-        width: '250px',
+        width: '240px',
         minHeight: 'calc(100vh - 120px)',
         padding: '16px 12px',
         display: 'flex',
@@ -65,68 +62,6 @@ const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }) => {
           );
         })}
       </div>
-
-      {/* User Profile Section placed at the VERY BOTTOM of Left Sidebar */}
-      {user && (
-        <div
-          style={{
-            marginTop: 'auto',
-            padding: '14px 12px',
-            background: 'rgba(15, 23, 42, 0.75)',
-            borderRadius: '12px',
-            border: '1px solid rgba(56, 189, 248, 0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '10px'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
-            <div
-              style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%)',
-                border: '1px solid rgba(6, 182, 212, 0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}
-            >
-              <User size={18} color="#38bdf8" />
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div
-                style={{
-                  fontSize: '0.8rem',
-                  fontWeight: '700',
-                  color: '#f8fafc',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-                title={user.full_name || user.username}
-              >
-                {user.full_name || user.username}
-              </div>
-              <span className="badge-critical" style={{ fontSize: '0.6rem', padding: '1px 6px', display: 'inline-block', marginTop: '2px' }}>
-                {user.role}
-              </span>
-            </div>
-          </div>
-          <button
-            id="logout-button"
-            onClick={logout}
-            className="btn-cyber-outline"
-            style={{ padding: '7px 9px', borderRadius: '8px', flexShrink: 0 }}
-            title="Sign out"
-          >
-            <LogOut size={15} />
-          </button>
-        </div>
-      )}
     </aside>
   );
 };

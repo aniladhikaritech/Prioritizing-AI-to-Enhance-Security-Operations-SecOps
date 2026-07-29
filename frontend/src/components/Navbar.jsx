@@ -5,7 +5,7 @@ import { SocketContext } from '../context/SocketContext';
 import { NotificationContext } from '../context/NotificationContext';
 import QRCodeModal from './QRCodeModal';
 import NotificationHistoryModal from './NotificationHistoryModal';
-import AIChatBotModal from './AIChatBotModal';
+import AIChatBotModal, { AIBotAvatar } from './AIChatBotModal';
 
 const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
   const { user, logout } = useContext(AuthContext);
@@ -124,11 +124,17 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
             <button
               onClick={() => setChatOpen(!chatOpen)}
               className="btn-cyber"
-              style={{ padding: '6px 12px', fontSize: '0.8rem', gap: '6px' }}
+              style={{
+                padding: '5px 12px',
+                fontSize: '0.8rem',
+                gap: '8px',
+                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(54, 250, 175, 0.2) 100%)',
+                border: '1px solid rgba(54, 250, 175, 0.4)'
+              }}
               title="Open AI SOC Assistant Chat"
             >
-              <Bot size={16} />
-              <span>AI Chat</span>
+              <AIBotAvatar size={24} iconSize={13} showLine={false} />
+              <span style={{ color: '#36FAAF', fontWeight: '700' }}>AI Assistant</span>
             </button>
 
             {/* User Badge */}
@@ -153,6 +159,27 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
           </div>
         </div>
       </header>
+
+      {/* Floating AI Bot Avatar Widget Button (matching screenshot) */}
+      {!chatOpen && (
+        <div
+          className="ai-chat-fab-float"
+          style={{
+            position: 'fixed',
+            bottom: '28px',
+            right: '28px',
+            zIndex: 9999
+          }}
+          title="Open AI SOC Assistant Chat"
+        >
+          <AIBotAvatar
+            size={54}
+            iconSize={26}
+            showLine={true}
+            onClick={() => setChatOpen(true)}
+          />
+        </div>
+      )}
 
       {/* QR Code Modal */}
       <QRCodeModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />

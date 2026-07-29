@@ -21,8 +21,8 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
     <>
       <header className="glass-panel" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', padding: '14px 28px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          {/* Brand Logo & Mobile Toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* Brand Logo, Title & User Profile Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
             <button
               onClick={onToggleMobileSidebar}
               className="btn-cyber-outline mobile-only-flex"
@@ -50,6 +50,26 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
                 Autonomous Cyber Incident Containment System & Playbook Automation
               </p>
             </div>
+
+            {/* User Profile Badge (Moved to Left Side next to Title) */}
+            {user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '14px', borderLeft: '1px solid rgba(148, 163, 184, 0.2)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <User size={18} color="#38bdf8" />
+                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#f8fafc' }}>{user.full_name || user.username}</span>
+                  <span className="badge-critical" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>{user.role}</span>
+                </div>
+                <button 
+                  id="logout-button"
+                  onClick={logout} 
+                  className="btn-cyber-outline" 
+                  style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                  title="Sign out"
+                >
+                  <LogOut size={14} />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Status Indicators & Action Controls */}
@@ -136,26 +156,6 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               <AIBotAvatar size={24} iconSize={13} showLine={false} />
               <span style={{ color: '#36FAAF', fontWeight: '700' }}>AI Assistant</span>
             </button>
-
-            {/* User Badge */}
-            {user && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '12px', borderLeft: '1px solid rgba(148, 163, 184, 0.2)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <User size={18} color="#38bdf8" />
-                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#f8fafc' }}>{user.full_name || user.username}</span>
-                  <span className="badge-critical" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>{user.role}</span>
-                </div>
-                <button 
-                  id="logout-button"
-                  onClick={logout} 
-                  className="btn-cyber-outline" 
-                  style={{ padding: '6px 10px', fontSize: '0.75rem' }}
-                  title="Sign out"
-                >
-                  <LogOut size={14} />
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </header>

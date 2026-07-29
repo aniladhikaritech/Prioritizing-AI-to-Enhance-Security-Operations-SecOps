@@ -68,26 +68,6 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               </span>
             </div>
 
-            {/* User Profile Badge (Positioned on the Left side of right action buttons) */}
-            {user && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '8px', paddingLeft: '8px', borderLeft: '1px solid rgba(148, 163, 184, 0.2)', borderRight: '1px solid rgba(148, 163, 184, 0.2)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <User size={18} color="#38bdf8" />
-                  <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#f8fafc' }}>{user.full_name || user.username}</span>
-                  <span className="badge-critical" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>{user.role}</span>
-                </div>
-                <button 
-                  id="logout-button"
-                  onClick={logout} 
-                  className="btn-cyber-outline" 
-                  style={{ padding: '6px 10px', fontSize: '0.75rem' }}
-                  title="Sign out"
-                >
-                  <LogOut size={14} />
-                </button>
-              </div>
-            )}
-
             {/* Sound Alert Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
@@ -139,6 +119,85 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               <QrCode size={16} color="#06b6d4" />
               <span>Mobile QR</span>
             </button>
+
+            {/* User Profile Card (Positioned at Far Right where AI Assistant was) */}
+            {user && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  background: 'rgba(11, 17, 32, 0.75)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  borderRadius: '14px',
+                  padding: '6px 10px 6px 8px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                {/* Circular User Avatar */}
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: 'rgba(6, 182, 212, 0.12)',
+                    border: '1px solid rgba(6, 182, 212, 0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}
+                >
+                  <User size={16} color="#38bdf8" />
+                </div>
+
+                {/* Name & Role Stack */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span
+                    style={{
+                      fontSize: '0.825rem',
+                      fontWeight: '700',
+                      color: '#f8fafc',
+                      lineHeight: 1.2
+                    }}
+                    title={user.full_name || user.username}
+                  >
+                    {user.full_name || user.username}
+                  </span>
+                  <div>
+                    <span
+                      className="badge-critical"
+                      style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 6px',
+                        borderRadius: '10px',
+                        letterSpacing: '0.04em'
+                      }}
+                    >
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Rounded Square Logout Button */}
+                <button
+                  id="logout-button"
+                  onClick={logout}
+                  className="btn-cyber-outline"
+                  style={{
+                    padding: '7px 9px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginLeft: '4px'
+                  }}
+                  title="Sign out"
+                >
+                  <LogOut size={15} color="#38bdf8" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>

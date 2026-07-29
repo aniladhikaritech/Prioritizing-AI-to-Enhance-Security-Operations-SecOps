@@ -139,23 +139,6 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               <QrCode size={16} color="#06b6d4" />
               <span>Mobile QR</span>
             </button>
-
-            {/* AI SOC Assistant Chatbot Button */}
-            <button
-              onClick={() => setChatOpen(!chatOpen)}
-              className="btn-cyber"
-              style={{
-                padding: '5px 12px',
-                fontSize: '0.8rem',
-                gap: '8px',
-                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(54, 250, 175, 0.2) 100%)',
-                border: '1px solid rgba(54, 250, 175, 0.4)'
-              }}
-              title="Open AI SOC Assistant Chat"
-            >
-              <AIBotAvatar size={24} iconSize={13} showLine={false} />
-              <span style={{ color: '#36FAAF', fontWeight: '700' }}>AI Assistant</span>
-            </button>
           </div>
         </div>
       </header>

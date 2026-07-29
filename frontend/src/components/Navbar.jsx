@@ -20,9 +20,9 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
   return (
     <>
       <header className="glass-panel" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', padding: '14px 28px', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          {/* Brand Logo & Title */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'nowrap' }}>
+          {/* Left: Brand Logo & Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
             <button
               onClick={onToggleMobileSidebar}
               className="btn-cyber-outline mobile-only-flex"
@@ -43,31 +43,32 @@ const Navbar = ({ onToggleMobileSidebar, isMobileSidebarOpen }) => {
               <Shield size={26} color="#06b6d4" />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', background: 'linear-gradient(90deg, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', background: 'linear-gradient(90deg, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0, lineHeight: 1.2 }}>
                 SecOps AI | Incident Response Center
               </h1>
-              <p style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '500' }}>
+              <p style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '500', margin: '2px 0 0 0' }}>
                 Autonomous Cyber Incident Containment System & Playbook Automation
               </p>
             </div>
           </div>
 
-          {/* Status Indicators & Action Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            {/* AI Engine Status */}
-            <div className="desktop-only-flex" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(15, 23, 42, 0.6)', padding: '6px 14px', borderRadius: '20px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
+          {/* Center: System Status Badges */}
+          <div className="desktop-only-flex" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(15, 23, 42, 0.6)', padding: '7px 14px', borderRadius: '20px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
               <Cpu size={16} color="#06b6d4" />
               <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>AI Agent: <span style={{ color: '#10b981' }}>SMART LOCAL (LLaMA 3 Ready)</span></span>
             </div>
 
-            {/* WebSocket Connection Status */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(15, 23, 42, 0.6)', padding: '6px 14px', borderRadius: '20px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(15, 23, 42, 0.6)', padding: '7px 14px', borderRadius: '20px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
               <div className={connected ? "pulse-dot" : "pulse-dot-red"}></div>
               <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>
                 {connected ? "LIVE SIEM STREAM" : "DISCONNECTED"}
               </span>
             </div>
+          </div>
 
+          {/* Right: Action Controls & User Profile Card */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
             {/* Sound Alert Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
